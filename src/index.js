@@ -1,4 +1,5 @@
 const express = require('express')
+const { ObjectID } = require('mongodb')
 require('./db/mongoose')
 
 const Post = require('./models/post')
@@ -47,6 +48,27 @@ app.get('/posts/:id', (req, res) => {
     }
     res.status(200).send(doc)
   }).catch(() => {
+    res.status(500).send()
+  })
+})
+
+//Delete Post by id
+app.delete('/posts/:id', (req, res) => {
+  Post.deleteOne({_id: req.params.id}).then((result) => {
+    res.status(200).send({deleted: result.deletedCount})
+  }).catch((e) => {
+    console.log(e)
+    res.status(500).send()
+  })
+})
+
+//Update Post by id
+app.patch('/posts/:id', (req, res) => {
+  Post.updateOne({_id: new ObjectID(req.params.id)}, req.body).then((result) => {
+    console.log(result)
+    res.status(200).send({modified: result.nModified})
+  }).catch((e) => {
+    console.log(e)
     res.status(500).send()
   })
 })

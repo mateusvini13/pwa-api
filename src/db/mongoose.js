@@ -4,7 +4,7 @@ const uristring =
     process.env.MONGODB_URI ||
     'mongodb://127.0.0.1:27017'
 
-mongoose.connect(`${uristring}/pwa-api`, {
+mongoose.connect(`${uristring}`, {
   useNewUrlParser: true,
   useCreateIndex: true
 })

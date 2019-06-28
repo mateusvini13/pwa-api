@@ -8,6 +8,10 @@ const port = process.env.PORT || 3000
 
 app.use(express.json())
 
+//Home page
+app.get('/', (req, res) => {
+  res.send('Nothing to see Here. Move on.')
+})
 //New Post
 app.post('/posts', (req, res) => {
   const newPost = new Post(req.body)

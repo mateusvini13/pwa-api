@@ -7,11 +7,17 @@ const app = express()
 const port = process.env.PORT || 3000
 
 app.use(express.json())
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  next()
+})
 
 //Home page
 app.get('/', (req, res) => {
   res.send('Nothing to see Here. Move on.')
 })
+
 //New Post
 app.post('/posts', (req, res) => {
   const newPost = new Post(req.body)
@@ -25,7 +31,7 @@ app.post('/posts', (req, res) => {
 
 //All Posts
 app.get('/posts', (req, res) => {
-  Post.find({}).then((docs) => {
+  Post.find(req.query).then((docs) => {
     res.status(200).send(docs)
   }).catch(() => {
     res.status(500).send()
@@ -33,7 +39,7 @@ app.get('/posts', (req, res) => {
 
 })
 
-//Get Post Details
+//Get Post Details by id
 app.get('/posts/:id', (req, res) => {
   Post.findById(req.params.id).then((doc) => {
     if(!doc){

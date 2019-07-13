@@ -24,15 +24,15 @@ app.get('/', (req, res) => {
 app.post('/posts', addPost)
 app.get('/posts', getPosts)
 app.get('/posts/:id', getPost)
-app.delete('/posts/:id', deletePost)
 app.patch('/posts/:id', updatePost)
+app.delete('/posts/:id', deletePost)
 
 // //Users
 app.post('/users', addUser)
 app.get('/users', getUsers)
 app.get('/users/:id', getUser)
-app.delete('/users/:id', deleteUser)
-app.patch('/users/:id', updateUser)
+// app.patch('/users/:id', updateUser)
+// app.delete('/users/:id', deleteUser)
 
 app.listen(port, () => {
   console.log(`Howdy, I\'m online and ready for duty on port ${port}`)

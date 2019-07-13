@@ -1,47 +1,63 @@
 const Post = require('../models/post')
+const slugify = require('slugify')
 
 module.exports = {
-  addPost: (req, res) => {
+  addPost: async (req, res) => {
+    req.body.slug = slugify(req.body.title, {lower: true})
     const newPost = new Post(req.body)
-  
-    newPost.save().then((savedPost) => {
+
+    try {
+      const savedPost = await newPost.save()
       res.status(201).send(savedPost)
-    }).catch((e) => {
-      res.status(400).send(e)
-    })
+    } catch (e) {
+      res.status(500).send(e.message)
+    }
+
   },
-  getPosts: (req, res) => {
-    Post.find(req.query).then((docs) => {
-      res.status(200).send(docs)
-    }).catch(() => {
+  getPosts: async (req, res) => {
+
+    try {
+      const posts = await Post.find(req.query)
+      res.send(posts)
+    } catch (e) {
       res.status(500).send()
-    })
+    }
+
   },
-  getPost: (req, res) => {
-    Post.findById(req.params.id).then((doc) => {
-      if(!doc){
+  getPost: async (req, res) => {
+    const _id = req.params.id
+
+    try {
+      const post = await Post.findById(_id)
+      if(!post) {
         return res.status(404).send()
       }
-      res.status(200).send(doc)
-    }).catch((e) => {
-      res.status(500).send(e)
-    })
-  },
-  deletePost: (req, res) => {
-    Post.deleteOne({_id: req.params.id}).then((result) => {
-      res.status(200).send({deleted: result.deletedCount})
-    }).catch((e) => {
-      console.log(e)
+      res.send(post)
+    } catch (e) {
       res.status(500).send()
-    })
+    }
+
   },
-  updatePost: (req, res) => {
-    Post.updateOne({_id: new ObjectID(req.params.id)}, req.body).then((result) => {
-      console.log(result)
-      res.status(200).send({modified: result.nModified})
-    }).catch((e) => {
-      console.log(e)
+  updatePost: async (req, res) => {
+    const _id = new ObjectID(req.params.id)
+
+    try {
+      const result = await Post.updateOne({_id}, req.body)
+      res.send({modified: result.nModified})
+    } catch (e) {
       res.status(500).send()
-    })
+    }
+    
+  },
+  deletePost: async (req, res) => {
+    const _id = req.params.id
+
+    try {
+      const result = await Post.deleteOne({_id})
+      res.send({deleted: result.deletedCount})
+    } catch (e) {
+      res.status(500).send()
+    }
+    
   }
 }
